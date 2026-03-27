@@ -2,7 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Zap, Clock, ChevronRight, Wifi, Circle } from 'lucide-react';
 
-export function MobileSession() {
+interface MobileSessionProps {
+  session?: any;
+  onJoin?: () => void;
+}
+
+export function MobileSession({ session, onJoin }: MobileSessionProps) {
   const [seconds, setSeconds] = useState(287);
 
   useEffect(() => {

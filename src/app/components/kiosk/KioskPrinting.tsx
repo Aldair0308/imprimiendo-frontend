@@ -2,18 +2,20 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Zap, Printer, FileText } from 'lucide-react';
 
-const files = [
-  { name: 'Tesis_Final.pdf', totalPages: 90, color: true },
-  { name: 'CV_2024.pdf', totalPages: 3, color: false },
-  { name: 'Presentacion.pdf', totalPages: 12, color: true },
-];
+interface KioskPrintingProps {
+  session?: any;
+  onRefresh?: () => void;
+}
 
-export function KioskPrinting() {
+export function KioskPrinting({ session }: KioskPrintingProps) {
+  const files = session?.files || [];
+  const totalPages = session?.total_pages || 0;
   const [fileIdx, setFileIdx] = useState(0);
   const [pageProgress, setPageProgress] = useState(0);
 
-  const currentFile = files[fileIdx];
-  const currentPage = Math.ceil((pageProgress / 100) * currentFile.totalPages);
+  const currentFile = files[fileIdx] || { filename: 'Archivo', page_range: 'all' };
+  const estimatedPages = currentFile.page_range === 'all' ? 10 : (currentFile.page_range.split('-').length || 1);
+  const currentPage = Math.ceil((pageProgress / 100) * estimatedPages * (currentFile.copies || 1));
 
   useEffect(() => {
     setPageProgress(0);

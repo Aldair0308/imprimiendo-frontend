@@ -1,45 +1,29 @@
 import { motion } from 'motion/react';
 import { Zap, FileText, ChevronRight, Info } from 'lucide-react';
 
-const items = [
-  {
-    name: 'Tesis_Final.pdf',
-    pages: 45,
-    copies: 2,
-    color: true,
-    orientation: 'Vertical',
-    size: 'Carta',
-    scale: '100%',
-    pricePerPage: 3.0,
-    subtotal: 270.0,
-  },
-  {
-    name: 'CV_2024.pdf',
-    pages: 3,
-    copies: 1,
-    color: false,
-    orientation: 'Vertical',
-    size: 'Carta',
-    scale: '100%',
-    pricePerPage: 1.5,
-    subtotal: 4.5,
-  },
-  {
-    name: 'Presentacion.pdf',
-    pages: 12,
-    copies: 1,
-    color: true,
-    orientation: 'Horizontal',
-    size: 'Carta',
-    scale: '100%',
-    pricePerPage: 3.0,
-    subtotal: 36.0,
-  },
-];
+interface MobileSummaryProps {
+  session?: any;
+  files?: any[];
+  onBack?: () => void;
+  onPrint?: () => void;
+}
 
-const TOTAL = items.reduce((s, i) => s + i.subtotal, 0);
+export function MobileSummary({ session, files = [], onBack, onPrint }: MobileSummaryProps) {
+  const items = files.map((f: any) => ({
+    name: f.filename,
+    pages: f.page_range === 'all' ? 10 : (f.page_range.split('-').length || 1),
+    copies: f.copies || 1,
+    color: f.color,
+    orientation: f.orientation || 'Vertical',
+    size: f.paper_size || 'Carta',
+    scale: `${f.scale || 100}%`,
+    pricePerPage: f.color ? 3.0 : 1.5,
+    subtotal: (f.page_range === 'all' ? 10 : (f.page_range.split('-').length || 1)) * (f.copies || 1) * (f.color ? 3.0 : 1.5),
+  }));
 
-export function MobileSummary() {
+  const total = items.reduce((sum: number, item: any) => sum + item.subtotal, 0);
+  const totalPages = items.reduce((s: number, i: any) => s + i.pages * i.copies, 0);
+
   return (
     <div
       className="w-full h-full flex flex-col overflow-auto"
@@ -55,7 +39,7 @@ export function MobileSummary() {
         </div>
         <div className="flex-1">
           <p style={{ color: '#F1F5F9', fontWeight: 700, fontSize: '0.95rem' }}>Resumen de impresión</p>
-          <p style={{ color: '#64748B', fontSize: '0.75rem' }}>Sesión IMP-2847</p>
+          <p style={{ color: '#64748B', fontSize: '0.75rem' }}>Sesión {session?.id?.slice(0, 8) || 'IMP-2847'}</p>
         </div>
       </div>
 
@@ -159,7 +143,7 @@ export function MobileSummary() {
         >
           <div className="flex items-center justify-between mb-3">
             <span style={{ color: '#94A3B8', fontSize: '0.85rem' }}>
-              {items.length} archivos · {items.reduce((s, i) => s + i.pages * i.copies, 0)} hojas totales
+              {items.length} archivos · {totalPages} hojas totales
             </span>
           </div>
           <div className="flex items-baseline justify-between">
@@ -173,7 +157,7 @@ export function MobileSummary() {
                   fontFamily: 'JetBrains Mono, monospace',
                 }}
               >
-                ${TOTAL.toFixed(2)}
+                ${total.toFixed(2)}
               </span>
               <span style={{ color: '#475569', fontSize: '0.85rem' }}>MXN</span>
             </div>
@@ -185,6 +169,7 @@ export function MobileSummary() {
       <div className="px-4 py-4">
         <motion.button
           whileTap={{ scale: 0.97 }}
+          onClick={onPrint}
           className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl"
           style={{ background: '#2563EB', border: 'none', cursor: 'pointer' }}
         >

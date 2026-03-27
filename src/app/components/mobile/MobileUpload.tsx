@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Zap, Upload, FileText, X, CheckCircle, AlertCircle, ChevronRight } from 'lucide-react';
 
-const initialFiles = [
-  { id: 1, name: 'Tesis_Final.pdf', size: '4.2 MB', pages: 45, status: 'done' },
-  { id: 2, name: 'CV_2024.pdf', size: '320 KB', pages: 3, status: 'done' },
-];
+interface MobileUploadProps {
+  session?: any;
+  onUpload?: (file: File) => void;
+  onBack?: () => void;
+}
 
-export function MobileUpload() {
-  const [files, setFiles] = useState(initialFiles);
+export function MobileUpload({ session, onUpload, onBack }: MobileUploadProps) {
+  const [files, setFiles] = useState<any[]>(session?.files || []);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
 

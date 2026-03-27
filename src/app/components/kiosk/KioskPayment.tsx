@@ -2,28 +2,23 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Zap, FileText, ChevronRight, Coins } from 'lucide-react';
 
-const files = [
-  { name: 'Tesis_Final.pdf', pages: 45, copies: 2, color: true, price: 270.0 },
-  { name: 'CV_2024.pdf', pages: 3, copies: 1, color: false, price: 4.5 },
-  { name: 'Presentacion.pdf', pages: 12, copies: 1, color: true, price: 36.0 },
-];
-const TOTAL = 310.5;
+interface KioskPaymentProps {
+  session?: any;
+  onRefresh?: () => void;
+}
 
-export function KioskPayment() {
+export function KioskPayment({ session }: KioskPaymentProps) {
+  const files = session?.files || [];
+  const totalCost = session?.total_cost || 0;
   const [inserted, setInserted] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => {
-      setInserted((v) => {
-        if (v >= TOTAL) return 0;
-        const coins = [1, 2, 5, 10, 20, 50];
-        const coin = coins[Math.floor(Math.random() * coins.length)];
-        return Math.min(v + coin, TOTAL);
-      });
-    }, 900);
-    return () => clearInterval(t);
-  }, []);
+    if (session?.payments?.[0]?.amount_inserted) {
+      setInserted(session.payments[0].amount_inserted);
+    }
+  }, [session]);
 
+  const TOTAL = totalCost;
   const pct = Math.min((inserted / TOTAL) * 100, 100);
   const remaining = Math.max(TOTAL - inserted, 0);
 

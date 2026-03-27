@@ -1,7 +1,13 @@
 import { motion } from 'motion/react';
 import { Zap, CheckCircle, Printer, Star, RotateCcw, LogOut } from 'lucide-react';
 
-export function MobileCompletion() {
+interface MobileCompletionProps {
+  session?: any;
+  onNew?: () => void;
+  onClose?: () => void;
+}
+
+export function MobileCompletion({ session, onNew, onClose }: MobileCompletionProps) {
   return (
     <div
       className="w-full h-full flex flex-col overflow-auto"

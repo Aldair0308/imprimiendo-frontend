@@ -2,16 +2,19 @@ import { motion } from 'motion/react';
 import { Zap, AlertTriangle, RefreshCw, X } from 'lucide-react';
 
 interface KioskErrorProps {
-  errorCode?: string;
-  errorMessage?: string;
-  errorDetail?: string;
+  session?: any;
+  onRetry?: () => void;
+  onCancel?: () => void;
 }
 
 export function KioskError({
-  errorCode = 'ERR-0x4A2',
-  errorMessage = 'Sin papel en la impresora',
-  errorDetail = 'La impresora ha quedado sin papel. Por favor contacta al personal para recargar la bandeja de alimentación.',
+  session,
+  onRetry,
+  onCancel,
 }: KioskErrorProps) {
+  const errorCode = 'ERR-0x4A2';
+  const errorMessage = session?.error_message || 'Error en el sistema';
+  const errorDetail = session?.error_detail || 'Ha ocurrido un error. Por favor intenta de nuevo.';
   return (
     <div
       className="w-full h-full flex flex-col relative overflow-hidden"

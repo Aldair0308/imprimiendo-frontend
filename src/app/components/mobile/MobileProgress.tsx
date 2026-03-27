@@ -2,18 +2,23 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Zap, FileText, CheckCircle, Loader, Clock } from 'lucide-react';
 
-const files = [
-  { id: 1, name: 'Tesis_Final.pdf', pages: 90, color: true },
-  { id: 2, name: 'CV_2024.pdf', pages: 3, color: false },
-  { id: 3, name: 'Presentacion.pdf', pages: 12, color: true },
-];
+interface MobileProgressProps {
+  session?: any;
+  onRefresh?: () => void;
+}
 
-type FileStatus = 'pending' | 'printing' | 'done';
-
-export function MobileProgress() {
-  const [statuses, setStatuses] = useState<FileStatus[]>(['printing', 'pending', 'pending']);
+export function MobileProgress({ session, onRefresh }: MobileProgressProps) {
+  const files = session?.files || [];
+  const [statuses, setStatuses] = useState<string[]>(files.map(() => 'pending'));
   const [progress, setProgress] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+
+  useEffect(() => {
+    if (onRefresh) {
+      const interval = setInterval(onRefresh, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [onRefresh]);
 
   useEffect(() => {
     const currentIdx = statuses.findIndex((s) => s === 'printing');

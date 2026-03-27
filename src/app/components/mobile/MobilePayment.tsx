@@ -4,15 +4,31 @@ import { Zap, Monitor, Coins, CheckCircle, Clock, AlertCircle } from 'lucide-rea
 
 type Stage = 'waiting' | 'inserting' | 'complete';
 
-export function MobilePayment() {
+interface MobilePaymentProps {
+  session?: any;
+  onRefresh?: () => void;
+}
+
+export function MobilePayment({ session, onRefresh }: MobilePaymentProps) {
   const [stage, setStage] = useState<Stage>('waiting');
-  const [inserted, setInserted] = useState(0);
-  const TOTAL = 310.5;
+  const totalRequired = session?.payments?.[0]?.amount_required || 0;
+  const inserted = session?.payments?.[0]?.amount_inserted || 0;
+  const paymentStatus = session?.payments?.[0]?.status || 'pending';
+  
+  useEffect(() => {
+    if (paymentStatus === 'paid') {
+      setStage('complete');
+    } else if (inserted > 0) {
+      setStage('inserting');
+    }
+  }, [paymentStatus, inserted]);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setStage('inserting'), 2000);
-    return () => clearTimeout(t1);
-  }, []);
+    const interval = setInterval(() => {
+      if (onRefresh) onRefresh();
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [onRefresh]);
 
   useEffect(() => {
     if (stage !== 'inserting') return;

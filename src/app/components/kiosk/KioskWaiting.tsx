@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Zap, Clock, FileText, Smartphone, Wifi } from 'lucide-react';
 import { QRCodeSVG } from '../QRCodeSVG';
 
-export function KioskWaiting() {
+interface KioskWaitingProps {
+  session?: any;
+  onRefresh?: () => void;
+}
+
+export function KioskWaiting({ session }: KioskWaitingProps) {
   const [seconds, setSeconds] = useState(287);
   const [dots, setDots] = useState('');
 

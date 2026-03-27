@@ -2,7 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Zap, CheckCircle, ArrowDown, RotateCcw } from 'lucide-react';
 
-export function KioskDone() {
+interface KioskDoneProps {
+  session?: any;
+  onNewSession?: () => void;
+}
+
+export function KioskDone({ session, onNewSession }: KioskDoneProps) {
   const [countdown, setCountdown] = useState(30);
 
   useEffect(() => {
